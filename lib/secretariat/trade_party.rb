@@ -16,11 +16,8 @@
 
 module Secretariat
   TradeParty = Struct.new('TradeParty',
-                          :name, :street1, :street2, :city, :postal_code, :country_id, :vat_id) do
-    def initialize(klass, name:, street1: nil, street2: nil, city: nil, postal_code: nil, country_id: nil, vat_id: nil)
-      super(klass, name, street1, street2, city, postal_code, country_id, vat_id)
-    end
-
+                          :name, :street1, :street2, :city, :postal_code, :country_id, :vat_id,
+                          keyword_init: true) do
     def to_xml(xml, exclude_tax: false, version: 2)
       xml['ram'].Name name
       xml['ram'].PostalTradeAddress do

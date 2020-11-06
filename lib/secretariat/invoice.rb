@@ -33,43 +33,8 @@ module Secretariat
                        :basis_amount,
                        :grand_total_amount,
                        :due_amount,
-                       :paid_amount) do
-    def initialize(klass,
-                   id:,
-                   issue_date:,
-                   seller:,
-                   buyer:,
-                   line_items: [],
-                   currency_code:,
-                   payment_type:,
-                   payment_text: nil,
-                   tax_category:,
-                   tax_percent:,
-                   tax_amount:,
-                   tax_reason:,
-                   basis_amount:,
-                   grand_total_amount:,
-                   due_amount:,
-                   paid_amount:)
-      super(klass,
-        id,
-        issue_date,
-        seller,
-        buyer,
-        line_items,
-        currency_code,
-        payment_type,
-        payment_text,
-        tax_category,
-        tax_percent,
-        tax_amount,
-        tax_reason,
-        basis_amount,
-        grand_total_amount,
-        due_amount,
-        paid_amount)
-    end
-
+                       :paid_amount,
+                       keyword_init: true) do
     include Versioner
 
     def errors

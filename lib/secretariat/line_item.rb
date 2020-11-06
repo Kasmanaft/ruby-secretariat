@@ -30,36 +30,10 @@ module Secretariat
                         :discount_reason,
                         :charge_amount,
                         :origin_country_code,
-                        :currency_code) do
-    def initialize(klass,
-                   name:,
-                   quantity:,
-                   unit:,
-                   gross_amount:,
-                   net_amount:,
-                   tax_category:,
-                   tax_percent:,
-                   tax_amount:,
-                   discount_amount: nil,
-                   discount_reason: nil,
-                   charge_amount:,
-                   origin_country_code: nil,
-                   currency_code: nil)
-      super(klass,
-            name,
-            quantity,
-            unit,
-            gross_amount,
-            net_amount,
-            tax_category,
-            tax_percent,
-            tax_amount,
-            discount_amount,
-            discount_reason,
-            charge_amount,
-            origin_country_code,
-            currency_code)
-    end
+                        :currency_code,
+
+                        keyword_init: true
+                      ) do
 
     include Versioner
 
