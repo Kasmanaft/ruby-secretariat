@@ -1,42 +1,74 @@
-=begin
-Copyright Jan Krutisch
+# frozen_string_literal: true
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-=end
+# Copyright Jan Krutisch
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 require 'bigdecimal'
 
 module Secretariat
-  Invoice = Struct.new("Invoice",
-    :id,
-    :issue_date,
-    :seller,
-    :buyer,
-    :line_items,
-    :currency_code,
-    :payment_type,
-    :payment_text,
-    :tax_category,
-    :tax_percent,
-    :tax_amount,
-    :tax_reason,
-    :basis_amount,
-    :grand_total_amount,
-    :due_amount,
-    :paid_amount,
-
-    keyword_init: true
-  ) do
+  Invoice = Struct.new('Invoice',
+                       :id,
+                       :issue_date,
+                       :seller,
+                       :buyer,
+                       :line_items,
+                       :currency_code,
+                       :payment_type,
+                       :payment_text,
+                       :tax_category,
+                       :tax_percent,
+                       :tax_amount,
+                       :tax_reason,
+                       :basis_amount,
+                       :grand_total_amount,
+                       :due_amount,
+                       :paid_amount) do
+    def initialize(klass,
+                   id:,
+                   issue_date:,
+                   seller:,
+                   buyer:,
+                   line_items: [],
+                   currency_code:,
+                   payment_type:,
+                   payment_text: nil,
+                   tax_category:,
+                   tax_percent:,
+                   tax_amount:,
+                   tax_reason:,
+                   basis_amount:,
+                   grand_total_amount:,
+                   due_amount:,
+                   paid_amount:)
+      super(klass,
+        id,
+        issue_date,
+        seller,
+        buyer,
+        line_items,
+        currency_code,
+        payment_type,
+        payment_text,
+        tax_category,
+        tax_percent,
+        tax_amount,
+        tax_reason,
+        basis_amount,
+        grand_total_amount,
+        due_amount,
+        paid_amount)
+    end
 
     include Versioner
 
@@ -49,9 +81,8 @@ module Secretariat
     end
 
     def tax_category_code(version: 2)
-      if version == 1
-        return TAX_CATEGORY_CODES_1[tax_category] || 'S'
-      end
+      return TAX_CATEGORY_CODES_1[tax_category] || 'S' if version == 1
+
       TAX_CATEGORY_CODES[tax_category] || 'S'
     end
 
@@ -82,43 +113,33 @@ module Secretariat
         @errors << "Line items do not add up to basis amount #{line_item_sum} / #{basis}"
         return false
       end
-      return true
+      true
     end
-
 
     def namespaces(version: 1)
       by_version(version,
-        {
-          'xmlns:ram' => 'urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12',
-          'xmlns:udt' => 'urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15',
-          'xmlns:rsm' => 'urn:ferd:CrossIndustryDocument:invoice:1p0',
-          'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
-        },
-        {
-          'xmlns:qdt' => 'urn:un:unece:uncefact:data:standard:QualifiedDataType:100',
-          'xmlns:ram' => 'urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100',
-          'xmlns:udt' => 'urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100',
-          'xmlns:rsm' => 'urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100',
-          'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
-        }
-      )
+                 {
+                   'xmlns:ram' => 'urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12',
+                   'xmlns:udt' => 'urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15',
+                   'xmlns:rsm' => 'urn:ferd:CrossIndustryDocument:invoice:1p0',
+                   'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
+                 },
+                 'xmlns:qdt' => 'urn:un:unece:uncefact:data:standard:QualifiedDataType:100',
+                 'xmlns:ram' => 'urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100',
+                 'xmlns:udt' => 'urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100',
+                 'xmlns:rsm' => 'urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100',
+                 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance')
     end
 
     def to_xml(version: 1)
-      if version < 1 || version > 2
-        raise 'Unsupported Document Version'
-      end
+      raise 'Unsupported Document Version' if version < 1 || version > 2
 
-      unless valid?
-        raise ValidationError.new("Invoice is invalid", errors)
-      end
+      raise ValidationError.new('Invoice is invalid', errors) unless valid?
 
       builder = Nokogiri::XML::Builder.new do |xml|
-
         root = by_version(version, 'CrossIndustryDocument', 'CrossIndustryInvoice')
 
         xml['rsm'].send(root, namespaces(version: version)) do
-
           context = by_version(version, 'SpecifiedExchangedDocumentContext', 'ExchangedDocumentContext')
 
           xml['rsm'].send(context) do
@@ -132,19 +153,16 @@ module Secretariat
 
           xml['rsm'].send(header) do
             xml['ram'].ID id
-            if version == 1
-              xml['ram'].Name "RECHNUNG"
-            end
+            xml['ram'].Name 'RECHNUNG' if version == 1
             xml['ram'].TypeCode '380' # TODO: make configurable
             xml['ram'].IssueDateTime do
               xml['udt'].DateTimeString(format: '102') do
-                xml.text(issue_date.strftime("%Y%m%d"))
+                xml.text(issue_date.strftime('%Y%m%d'))
               end
             end
           end
           transaction = by_version(version, 'SpecifiedSupplyChainTradeTransaction', 'SupplyChainTradeTransaction')
           xml['rsm'].send(transaction) do
-
             if version == 2
               line_items.each_with_index do |item, i|
                 item.to_xml(xml, i + 1, version: version) # one indexed
@@ -173,7 +191,7 @@ module Secretariat
               xml['ram'].ActualDeliverySupplyChainEvent do
                 xml['ram'].OccurrenceDateTime do
                   xml['udt'].DateTimeString(format: '102') do
-                    xml.text(issue_date.strftime("%Y%m%d"))
+                    xml.text(issue_date.strftime('%Y%m%d'))
                   end
                 end
               end
@@ -186,7 +204,6 @@ module Secretariat
                 xml['ram'].Information payment_text
               end
               xml['ram'].ApplicableTradeTax do
-
                 Helpers.currency_element(xml, 'ram', 'CalculatedAmount', tax_amount, currency_code, add_currency: version == 1)
                 xml['ram'].TypeCode 'VAT'
                 if tax_reason_text && tax_reason_text != ''
@@ -199,7 +216,7 @@ module Secretariat
                 xml['ram'].send(percent, Helpers.format(tax_percent))
               end
               xml['ram'].SpecifiedTradePaymentTerms do
-                xml['ram'].Description "Paid"
+                xml['ram'].Description 'Paid'
               end
 
               monetary_summation = by_version(version, 'SpecifiedTradeSettlementMonetarySummation', 'SpecifiedTradeSettlementHeaderMonetarySummation')

@@ -1,42 +1,65 @@
-=begin
-Copyright Jan Krutisch
+# frozen_string_literal: true
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-=end
-
-
+# Copyright Jan Krutisch
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 require 'bigdecimal'
 module Secretariat
-
-
   LineItem = Struct.new('LineItem',
-    :name,
-    :quantity,
-    :unit,
-    :gross_amount,
-    :net_amount,
-    :tax_category,
-    :tax_percent,
-    :tax_amount,
-    :discount_amount,
-    :discount_reason,
-    :charge_amount,
-    :origin_country_code,
-    :currency_code,
-    keyword_init: true
-  ) do
+                        :name,
+                        :quantity,
+                        :unit,
+                        :gross_amount,
+                        :net_amount,
+                        :tax_category,
+                        :tax_percent,
+                        :tax_amount,
+                        :discount_amount,
+                        :discount_reason,
+                        :charge_amount,
+                        :origin_country_code,
+                        :currency_code) do
+    def initialize(klass,
+                   name:,
+                   quantity:,
+                   unit:,
+                   gross_amount:,
+                   net_amount:,
+                   tax_category:,
+                   tax_percent:,
+                   tax_amount:,
+                   discount_amount: nil,
+                   discount_reason: nil,
+                   charge_amount:,
+                   origin_country_code: nil,
+                   currency_code: nil)
+      super(klass,
+            name,
+            quantity,
+            unit,
+            gross_amount,
+            net_amount,
+            tax_category,
+            tax_percent,
+            tax_amount,
+            discount_amount,
+            discount_reason,
+            charge_amount,
+            origin_country_code,
+            currency_code)
+    end
 
     include Versioner
 
@@ -70,7 +93,7 @@ module Secretariat
         @errors << "Tax and calculated tax deviate: #{tax} / #{calculated_tax}"
         return false
       end
-      return true
+      true
     end
 
     def unit_code
@@ -78,14 +101,13 @@ module Secretariat
     end
 
     def tax_category_code(version: 2)
-      if version == 1
-        return TAX_CATEGORY_CODES_1[tax_category] || 'S'
-      end
+      return TAX_CATEGORY_CODES_1[tax_category] || 'S' if version == 1
+
       TAX_CATEGORY_CODES[tax_category] || 'S'
     end
 
     def to_xml(xml, line_item_index, version: 2)
-      if !valid?
+      unless valid?
         pp errors
         raise ValidationError.new("LineItem #{line_item_index} is invalid", errors)
       end
@@ -94,7 +116,7 @@ module Secretariat
         xml['ram'].AssociatedDocumentLineDocument do
           xml['ram'].LineID line_item_index
         end
-        if (version == 2)
+        if version == 2
           xml['ram'].SpecifiedTradeProduct do
             xml['ram'].Name name
             xml['ram'].OriginTradeCountry do
@@ -155,8 +177,7 @@ module Secretariat
             xml['ram'].CategoryCode tax_category_code(version: version)
 
             percent = by_version(version, 'ApplicablePercent', 'RateApplicablePercent')
-            xml['ram'].send(percent,Helpers.format(tax_percent))
-
+            xml['ram'].send(percent, Helpers.format(tax_percent))
           end
           monetary_summation = by_version(version, 'SpecifiedTradeSettlementMonetarySummation', 'SpecifiedTradeSettlementLineMonetarySummation')
           xml['ram'].send(monetary_summation) do
