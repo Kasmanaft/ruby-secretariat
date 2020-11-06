@@ -17,8 +17,7 @@
 
 require 'bigdecimal'
 module Secretariat
-  LineItem = Struct.new('LineItem',
-                        :name,
+  LineItem = Struct.new(:name,
                         :quantity,
                         :unit,
                         :gross_amount,
@@ -31,8 +30,7 @@ module Secretariat
                         :charge_amount,
                         :origin_country_code,
                         :currency_code) do
-    def initialize(klass,
-                   name:,
+    def initialize(name:,
                    quantity:,
                    unit:,
                    gross_amount:,
@@ -45,7 +43,7 @@ module Secretariat
                    charge_amount:,
                    origin_country_code: nil,
                    currency_code: nil)
-      super(klass,
+      super('LineItem',
             name,
             quantity,
             unit,

@@ -15,10 +15,9 @@
 # limitations under the License.
 
 module Secretariat
-  TradeParty = Struct.new('TradeParty',
-                          :name, :street1, :street2, :city, :postal_code, :country_id, :vat_id) do
-    def initialize(klass, name:, street1: nil, street2: nil, city: nil, postal_code: nil, country_id: nil, vat_id: nil)
-      super(klass, name, street1, street2, city, postal_code, country_id, vat_id)
+  TradeParty = Struct.new(:name, :street1, :street2, :city, :postal_code, :country_id, :vat_id) do
+    def initialize(name:, street1: nil, street2: nil, city: nil, postal_code: nil, country_id: nil, vat_id: nil)
+      super('TradeParty', name, street1, street2, city, postal_code, country_id, vat_id)
     end
 
     def to_xml(xml, exclude_tax: false, version: 2)

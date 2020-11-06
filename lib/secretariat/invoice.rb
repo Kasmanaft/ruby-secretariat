@@ -17,8 +17,7 @@
 require 'bigdecimal'
 
 module Secretariat
-  Invoice = Struct.new('Invoice',
-                       :id,
+  Invoice = Struct.new(:id,
                        :issue_date,
                        :seller,
                        :buyer,
@@ -34,8 +33,7 @@ module Secretariat
                        :grand_total_amount,
                        :due_amount,
                        :paid_amount) do
-    def initialize(klass,
-                   id:,
+    def initialize(id:,
                    issue_date:,
                    seller:,
                    buyer:,
@@ -51,7 +49,7 @@ module Secretariat
                    grand_total_amount:,
                    due_amount:,
                    paid_amount:)
-      super(klass,
+      super('Invoice',
         id,
         issue_date,
         seller,
