@@ -57,7 +57,7 @@ module Secretariat
 
     def valid?
       @errors = []
-      # tax = BigDecimal(tax_amount)
+      tax = BigDecimal(tax_amount)
       basis = BigDecimal(basis_amount)
       # calc_tax = basis * BigDecimal(tax_percent) / BigDecimal(100)
       # calc_tax = calc_tax.round(2, :down)
