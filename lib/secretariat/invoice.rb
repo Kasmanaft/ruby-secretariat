@@ -57,14 +57,14 @@ module Secretariat
 
     def valid?
       @errors = []
-      tax = BigDecimal(tax_amount)
+      # tax = BigDecimal(tax_amount)
       basis = BigDecimal(basis_amount)
-      calc_tax = basis * BigDecimal(tax_percent) / BigDecimal(100)
-      calc_tax = calc_tax.round(2, :down)
-      if tax != calc_tax
-        @errors << "Tax amount and calculated tax amount deviate: #{tax} / #{calc_tax}"
-        return false
-      end
+      # calc_tax = basis * BigDecimal(tax_percent) / BigDecimal(100)
+      # calc_tax = calc_tax.round(2, :down)
+      # if tax != calc_tax
+      #   @errors << "Tax amount and calculated tax amount deviate: #{tax} / #{calc_tax}"
+      #   return false
+      # end
       grand_total = BigDecimal(grand_total_amount)
       calc_grand_total = basis + tax
       if grand_total != calc_grand_total
@@ -168,18 +168,18 @@ module Secretariat
                 xml['ram'].TypeCode payment_code
                 xml['ram'].Information payment_text
               end
-              xml['ram'].ApplicableTradeTax do
-                Helpers.currency_element(xml, 'ram', 'CalculatedAmount', tax_amount, currency_code, add_currency: version == 1)
-                xml['ram'].TypeCode 'VAT'
-                if tax_reason_text && tax_reason_text != ''
-                  xml['ram'].ExemptionReason tax_reason_text
-                end
-                Helpers.currency_element(xml, 'ram', 'BasisAmount', basis_amount, currency_code, add_currency: version == 1)
-                xml['ram'].CategoryCode tax_category_code(version: version)
+              # xml['ram'].ApplicableTradeTax do
+              #   Helpers.currency_element(xml, 'ram', 'CalculatedAmount', tax_amount, currency_code, add_currency: version == 1)
+              #   xml['ram'].TypeCode 'VAT'
+              #   if tax_reason_text && tax_reason_text != ''
+              #     xml['ram'].ExemptionReason tax_reason_text
+              #   end
+              #   Helpers.currency_element(xml, 'ram', 'BasisAmount', basis_amount, currency_code, add_currency: version == 1)
+              #   xml['ram'].CategoryCode tax_category_code(version: version)
 
-                percent = by_version(version, 'ApplicablePercent', 'RateApplicablePercent')
-                xml['ram'].send(percent, Helpers.format(tax_percent))
-              end
+              #   percent = by_version(version, 'ApplicablePercent', 'RateApplicablePercent')
+              #   xml['ram'].send(percent, Helpers.format(tax_percent))
+              # end
               xml['ram'].SpecifiedTradePaymentTerms do
                 xml['ram'].Description 'Paid'
               end
