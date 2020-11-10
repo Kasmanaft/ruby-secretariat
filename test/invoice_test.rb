@@ -1,9 +1,19 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 module Secretariat
   class InvoiceTest < Minitest::Test
-
     def make_eu_invoice
+      taxes = [
+        Tax.new(
+          tax_category: :REVERSECHARGE,
+          tax_percent: 0,
+          tax_amount: '0',
+          basis_amount: '29',
+          currency_code: 'USD'
+        )
+      ]
       seller = TradeParty.new(
         name: 'Depfu inc',
         street1: 'Quickbornstr. 46',
@@ -29,7 +39,7 @@ module Secretariat
         charge_amount: '29',
         tax_category: :REVERSECHARGE,
         tax_percent: 0,
-        tax_amount: "0",
+        tax_amount: '0',
         origin_country_code: 'DE',
         currency_code: 'EUR'
       )
@@ -42,8 +52,9 @@ module Secretariat
         currency_code: 'USD',
         payment_type: :CREDITCARD,
         payment_text: 'Kreditkarte',
-        tax_category: :REVERSECHARGE,
-        tax_percent: 0,
+        taxes: taxes,
+        # tax_category: :REVERSECHARGE,
+        # tax_percent: 0,
         tax_amount: '0',
         basis_amount: '29',
         grand_total_amount: 29,
@@ -53,6 +64,15 @@ module Secretariat
     end
 
     def make_de_invoice
+      taxes = [
+        Tax.new(
+          tax_category: :STANDARDRATE,
+          tax_percent: '19',
+          tax_amount: '3.80',
+          basis_amount: '20',
+          currency_code: 'EUR'
+        )
+      ]
       seller = TradeParty.new(
         name: 'Depfu inc',
         street1: 'Quickbornstr. 46',
@@ -80,7 +100,7 @@ module Secretariat
         discount_reason: 'Rabatt',
         tax_category: :STANDARDRATE,
         tax_percent: '19',
-        tax_amount: "3.80",
+        tax_amount: '3.80',
         origin_country_code: 'DE',
         currency_code: 'EUR'
       )
@@ -93,8 +113,9 @@ module Secretariat
         currency_code: 'USD',
         payment_type: :CREDITCARD,
         payment_text: 'Kreditkarte',
-        tax_category: :STANDARDRATE,
-        tax_percent: '19',
+        taxes: taxes,
+        # tax_category: :STANDARDRATE,
+        # tax_percent: '19',
         tax_amount: '3.80',
         basis_amount: '20',
         grand_total_amount: '23.80',
@@ -112,7 +133,7 @@ module Secretariat
 
       v = Validator.new(xml, version: 2)
       errors = v.validate_against_schema
-      if !errors.empty?
+      unless errors.empty?
         puts xml
         errors.each do |error|
           puts error
@@ -140,7 +161,7 @@ module Secretariat
       xml = make_de_invoice.to_xml(version: 2)
       v = Validator.new(xml, version: 2)
       errors = v.validate_against_schema
-      if !errors.empty?
+      unless errors.empty?
         puts xml
         errors.each do |error|
           puts error
@@ -153,7 +174,7 @@ module Secretariat
       xml = make_de_invoice.to_xml(version: 1)
       v = Validator.new(xml, version: 1)
       errors = v.validate_against_schema
-      if !errors.empty?
+      unless errors.empty?
         puts xml
         errors.each do |error|
           puts error
@@ -171,7 +192,7 @@ module Secretariat
 
       v = Validator.new(xml, version: 1)
       errors = v.validate_against_schema
-      if !errors.empty?
+      unless errors.empty?
         puts xml
         errors.each do |error|
           puts error
@@ -186,7 +207,7 @@ module Secretariat
       xml = make_de_invoice.to_xml(version: 1)
       v = Validator.new(xml, version: 1)
       errors = v.validate_against_schematron
-      if !errors.empty?
+      unless errors.empty?
         puts xml
         errors.each do |error|
           puts "#{error[:line]}: #{error[:message]}"

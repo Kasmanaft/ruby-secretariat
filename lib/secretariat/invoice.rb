@@ -26,10 +26,11 @@ module Secretariat
                        :currency_code,
                        :payment_type,
                        :payment_text,
-                       :tax_category,
-                       :tax_percent,
+                       :taxes,
+                       #  :tax_category,
+                       #  :tax_percent,
                        :tax_amount,
-                       :tax_reason,
+                       #  :tax_reason,
                        :basis_amount,
                        :grand_total_amount,
                        :due_amount,
@@ -41,15 +42,15 @@ module Secretariat
       @errors
     end
 
-    def tax_reason_text
-      tax_reason || TAX_EXEMPTION_REASONS[tax_category]
-    end
+    # def tax_reason_text
+    #   tax_reason || TAX_EXEMPTION_REASONS[tax_category]
+    # end
 
-    def tax_category_code(version: 2)
-      return TAX_CATEGORY_CODES_1[tax_category] || 'S' if version == 1
+    # def tax_category_code(version: 2)
+    #   return TAX_CATEGORY_CODES_1[tax_category] || 'S' if version == 1
 
-      TAX_CATEGORY_CODES[tax_category] || 'S'
-    end
+    #   TAX_CATEGORY_CODES[tax_category] || 'S'
+    # end
 
     def payment_code
       PAYMENT_CODES[payment_type] || '1'
@@ -168,6 +169,8 @@ module Secretariat
                 xml['ram'].TypeCode payment_code
                 xml['ram'].Information payment_text
               end
+              taxes.each { |tax| tax.to_xml(xml, version: version) }
+
               # xml['ram'].ApplicableTradeTax do
               #   Helpers.currency_element(xml, 'ram', 'CalculatedAmount', tax_amount, currency_code, add_currency: version == 1)
               #   xml['ram'].TypeCode 'VAT'

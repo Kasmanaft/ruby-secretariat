@@ -82,7 +82,6 @@ module Secretariat
 
     def to_xml(xml, line_item_index, version: 2)
       unless valid?
-        pp errors
         raise ValidationError.new("LineItem #{line_item_index} is invalid", errors)
       end
 
