@@ -21,6 +21,7 @@ module Secretariat
                         :name,
                         :quantity,
                         :unit,
+                        :unit_code, # EN16391 code, some of them defined in UNIT_CODES
                         :gross_amount,
                         :net_amount,
                         :tax_category,
@@ -31,10 +32,7 @@ module Secretariat
                         :charge_amount,
                         :origin_country_code,
                         :currency_code,
-
-                        keyword_init: true
-                      ) do
-
+                        keyword_init: true) do
     include Versioner
 
     def errors
@@ -70,8 +68,8 @@ module Secretariat
       true
     end
 
-    def unit_code
-      UNIT_CODES[unit] || 'C62'
+    def unit_code_with_fallback
+      unit_code || UNIT_CODES[unit] || 'C62'
     end
 
     def tax_category_code(version: 2)
@@ -103,7 +101,7 @@ module Secretariat
           xml['ram'].GrossPriceProductTradePrice do
             Helpers.currency_element(xml, 'ram', 'ChargeAmount', gross_amount, currency_code, add_currency: version == 1, digits: 4)
             if version == 2 && discount_amount
-              xml['ram'].BasisQuantity(unitCode: unit_code) do
+              xml['ram'].BasisQuantity(unitCode: unit_code_with_fallback) do
                 xml.text(Helpers.format(quantity, digits: 4))
               end
               xml['ram'].AppliedTradeAllowanceCharge do
@@ -127,7 +125,7 @@ module Secretariat
           xml['ram'].NetPriceProductTradePrice do
             Helpers.currency_element(xml, 'ram', 'ChargeAmount', net_amount, currency_code, add_currency: version == 1, digits: 4)
             if version == 2
-              xml['ram'].BasisQuantity(unitCode: unit_code) do
+              xml['ram'].BasisQuantity(unitCode: unit_code_with_fallback) do
                 xml.text(Helpers.format(quantity, digits: 4))
               end
             end
@@ -137,7 +135,7 @@ module Secretariat
         delivery = by_version(version, 'SpecifiedSupplyChainTradeDelivery', 'SpecifiedLineTradeDelivery')
 
         xml['ram'].send(delivery) do
-          xml['ram'].BilledQuantity(unitCode: unit_code) do
+          xml['ram'].BilledQuantity(unitCode: unit_code_with_fallback) do
             xml.text(Helpers.format(quantity, digits: 4))
           end
         end
