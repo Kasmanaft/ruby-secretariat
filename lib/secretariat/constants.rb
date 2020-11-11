@@ -1,80 +1,94 @@
-=begin
-Copyright Jan Krutisch
+# frozen_string_literal: true
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-=end
+# Copyright Jan Krutisch
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 module Secretariat
-
   TAX_CATEGORY_CODES = {
-   :STANDARDRATE => "S",
-   :REVERSECHARGE => "AE",
-   :TAXEXEMPT => "E",
-   :ZEROTAXPRODUCTS => "Z",
-   :UNTAXEDSERVICE => "O",
-   :INTRACOMMUNITY => "K",
-   :EXPORT => 'G'
-  }
+    STANDARDRATE: 'S',
+    REVERSECHARGE: 'AE',
+    TAXEXEMPT: 'E',
+    ZEROTAXPRODUCTS: 'Z',
+    UNTAXEDSERVICE: 'O',
+    INTRACOMMUNITY: 'K',
+    EXPORT: 'G'
+  }.freeze
 
   TAX_CATEGORY_CODES_1 = {
-   :STANDARDRATE => "S",
-   :REVERSECHARGE => "AE",
-   :TAXEXEMPT => "E",
-   :ZEROTAXPRODUCTS => "Z",
-   :UNTAXEDSERVICE => "O",
-   :INTRACOMMUNITY => "IC",
-   :EXPORT => 'E'
-  }
+    STANDARDRATE: 'S',
+    REVERSECHARGE: 'AE',
+    TAXEXEMPT: 'E',
+    ZEROTAXPRODUCTS: 'Z',
+    UNTAXEDSERVICE: 'O',
+    INTRACOMMUNITY: 'IC',
+    EXPORT: 'E'
+  }.freeze
 
   PAYMENT_CODES = {
-   :BANKACCOUNT => "42",
-   :NOTSPECIFIED => "1",
-   :AUTOMATICCLEARING => "3",
-   :CASH => "10",
-   :CHECK => "20",
-   :DEBITADVICE => "31",
-   :CREDITCARD => "48",
-   :DEBIT => "49",
-   :COMPENSATION => "97",
-  }
+    BANKACCOUNT: '42',
+    NOTSPECIFIED: '1',
+    AUTOMATICCLEARING: '3',
+    CASH: '10',
+    CHECK: '20',
+    DEBITADVICE: '31',
+    CREDITCARD: '48',
+    DEBIT: '49',
+    COMPENSATION: '97'
+  }.freeze
 
   TAX_EXEMPTION_REASONS = {
-    :REVERSECHARGE => 'Reverse Charge',
-    :INTRACOMMUNITY => 'Intra-community transaction',
-    :EXPORT => 'Export outside the EU'
-  }
+    REVERSECHARGE: 'Reverse Charge',
+    INTRACOMMUNITY: 'Intra-community transaction',
+    EXPORT: 'Export outside the EU'
+  }.freeze
 
   UNIT_CODES = {
-    :PIECE => "C62",
-    :DAY => "DAY",
-    :HECTARE => "HAR",
-    :HOUR => "HUR",
-    :KILOGRAM => "KGM",
-    :KILOMETER => "KTM",
-    :KILOWATTHOUR => "KWH",
-    :FIXEDRATE => "LS",
-    :LITRE => "LTR",
-    :MINUTE => "MIN",
-    :SQUAREMILLIMETER => "MMK",
-    :MILLIMETER => "MMT",
-    :SQUAREMETER => "MTK",
-    :CUBICMETER => "MTQ",
-    :METER => "MTR",
-    :PRODUCTCOUNT => "NAR",
-    :PRODUCTPAIR => "NPR",
-    :PERCENT => "P1",
-    :SET => "SET",
-    :TON => "TNE",
-    :WEEK => "WEE"
-  }
+    PIECE: 'C62',
+    DAY: 'DAY',
+    HECTARE: 'HAR',
+    HOUR: 'HUR',
+    KILOGRAM: 'KGM',
+    KILOMETER: 'KTM',
+    KILOWATTHOUR: 'KWH',
+    FIXEDRATE: 'LS',
+    LITRE: 'LTR',
+    MINUTE: 'MIN',
+    SQUAREMILLIMETER: 'MMK',
+    MILLIMETER: 'MMT',
+    SQUAREMETER: 'MTK',
+    CUBICMETER: 'MTQ',
+    METER: 'MTR',
+    PRODUCTCOUNT: 'NAR',
+    PRODUCTPAIR: 'NPR',
+    PERCENT: 'P1',
+    SET: 'SET',
+    TON: 'TNE',
+    WEEK: 'WEE'
+  }.freeze
+
+  INVOICE_TYPES = {
+    INVOICE: {
+      code: '380',
+      name: 'Rechnung'
+    },
+    CREDIT_NOTE: {
+      code: '381',
+      name: 'Gutschrift'
+    },
+    REVERSED_INVOICE: {
+      code: '457',
+      name: 'Stornorechnung'
+    }
+  }.freeze
 end

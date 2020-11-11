@@ -27,30 +27,18 @@ module Secretariat
                        :payment_type,
                        :payment_text,
                        :taxes,
-                       #  :tax_category,
-                       #  :tax_percent,
                        :tax_amount,
-                       #  :tax_reason,
                        :basis_amount,
                        :grand_total_amount,
                        :due_amount,
                        :paid_amount,
+                       :type,
                        keyword_init: true) do
     include Versioner
 
     def errors
       @errors
     end
-
-    # def tax_reason_text
-    #   tax_reason || TAX_EXEMPTION_REASONS[tax_category]
-    # end
-
-    # def tax_category_code(version: 2)
-    #   return TAX_CATEGORY_CODES_1[tax_category] || 'S' if version == 1
-
-    #   TAX_CATEGORY_CODES[tax_category] || 'S'
-    # end
 
     def payment_code
       PAYMENT_CODES[payment_type] || '1'
@@ -97,6 +85,13 @@ module Secretariat
                  'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance')
     end
 
+    def invoice_type(xml)
+      type ||= INVOICE
+        xml['ram'].Name INVOICE_TYPES[type][:name] if version == 1
+        xml['ram'].TypeCode INVOICE_TYPES[type][:code]
+      end
+    end
+
     def to_xml(version: 1)
       raise 'Unsupported Document Version' if version < 1 || version > 2
 
@@ -119,8 +114,9 @@ module Secretariat
 
           xml['rsm'].send(header) do
             xml['ram'].ID id
-            xml['ram'].Name 'RECHNUNG' if version == 1
-            xml['ram'].TypeCode '380' # TODO: make configurable
+            invoice_type(xml)
+            # xml['ram'].Name 'RECHNUNG' if version == 1
+            # xml['ram'].TypeCode '380' # TODO: make configurable
             xml['ram'].IssueDateTime do
               xml['udt'].DateTimeString(format: '102') do
                 xml.text(issue_date.strftime('%Y%m%d'))
@@ -169,20 +165,9 @@ module Secretariat
                 xml['ram'].TypeCode payment_code
                 xml['ram'].Information payment_text
               end
+
               taxes.each { |tax| tax.to_xml(xml, version: version) }
 
-              # xml['ram'].ApplicableTradeTax do
-              #   Helpers.currency_element(xml, 'ram', 'CalculatedAmount', tax_amount, currency_code, add_currency: version == 1)
-              #   xml['ram'].TypeCode 'VAT'
-              #   if tax_reason_text && tax_reason_text != ''
-              #     xml['ram'].ExemptionReason tax_reason_text
-              #   end
-              #   Helpers.currency_element(xml, 'ram', 'BasisAmount', basis_amount, currency_code, add_currency: version == 1)
-              #   xml['ram'].CategoryCode tax_category_code(version: version)
-
-              #   percent = by_version(version, 'ApplicablePercent', 'RateApplicablePercent')
-              #   xml['ram'].send(percent, Helpers.format(tax_percent))
-              # end
               xml['ram'].SpecifiedTradePaymentTerms do
                 xml['ram'].Description 'Paid'
               end
