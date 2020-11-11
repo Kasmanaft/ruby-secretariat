@@ -86,7 +86,7 @@ module Secretariat
     end
 
     def invoice_type(xml, version)
-      type ||= :INVOICE
+      type ||= 'INVOICE'
       xml['ram'].Name INVOICE_TYPES[type][:name] if version == 1
       xml['ram'].TypeCode INVOICE_TYPES[type][:code]
     end
