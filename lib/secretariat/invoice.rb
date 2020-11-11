@@ -85,8 +85,8 @@ module Secretariat
                  'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance')
     end
 
-    def invoice_type(xml, version)
-      type ||= :INVOICE
+    def invoice_name_and_type(xml, version)
+      self[:type] ||= :INVOICE
       xml['ram'].Name INVOICE_TYPES[type][:name] if version == 1
       xml['ram'].TypeCode INVOICE_TYPES[type][:code]
     end
@@ -113,7 +113,7 @@ module Secretariat
 
           xml['rsm'].send(header) do
             xml['ram'].ID id
-            invoice_type(xml, version)
+            invoice_name_and_type(xml, version)
             # xml['ram'].Name 'RECHNUNG' if version == 1
             # xml['ram'].TypeCode '380' # TODO: make configurable
             xml['ram'].IssueDateTime do

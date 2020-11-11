@@ -1,5 +1,6 @@
-require 'test_helper'
+# frozen_string_literal: true
 
+require 'test_helper'
 
 module Secretariat
   class ValidatorTest < Minitest::Test
@@ -28,4 +29,3 @@ module Secretariat
     end
   end
 end
-
