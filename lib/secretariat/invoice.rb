@@ -86,10 +86,9 @@ module Secretariat
     end
 
     def invoice_type(xml)
-      type ||= INVOICE
-        xml['ram'].Name INVOICE_TYPES[type][:name] if version == 1
-        xml['ram'].TypeCode INVOICE_TYPES[type][:code]
-      end
+      type ||= :INVOICE
+      xml['ram'].Name INVOICE_TYPES[type][:name] if version == 1
+      xml['ram'].TypeCode INVOICE_TYPES[type][:code]
     end
 
     def to_xml(version: 1)
