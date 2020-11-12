@@ -53,14 +53,14 @@ module Secretariat
       end
       if discount_amount
         discount = BigDecimal(discount_amount)
-        calculated_net_price = (gross_price - discount).round(2, :down)
+        calculated_net_price = (gross_price - discount).round(2)
         if calculated_net_price != net_price
           @errors = "Calculated net price and net price deviate: #{calculated_net_price} / #{net_price}"
           return false
         end
       end
 
-      calculated_tax = charge_price * BigDecimal(tax_percent) / BigDecimal(100)
+      calculated_tax = (charge_price * BigDecimal(tax_percent) / BigDecimal(100)).round(2)
       if calculated_tax != tax
         @errors << "Tax and calculated tax deviate: #{tax} / #{calculated_tax}"
         return false
