@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'lib/secretariat/version'
+require 'secretariat/version'
 require 'rake'
 Gem::Specification.new do |s|
   s.name        = 'secretariat'
