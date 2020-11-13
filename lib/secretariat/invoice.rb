@@ -34,7 +34,7 @@ module Secretariat
                        :paid_amount,
                        :type,
                        :payment_text,
-                       :to_date,
+                       :due_date,
                        keyword_init: true) do
     include Versioner
 
@@ -178,7 +178,7 @@ module Secretariat
                   xml['ram'].Description payment_text
                   xml['ram'].DueDateDateTime do
                     xml['udt'].DateTimeString(format: '102') do
-                      xml.text(to_date.strftime('%Y%m%d'))
+                      xml.text(due_date.strftime('%Y%m%d'))
                     end
                   end
                 end
