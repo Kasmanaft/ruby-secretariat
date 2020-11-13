@@ -25,7 +25,7 @@ module Secretariat
                        :line_items,
                        :currency_code,
                        :payment_type,
-                       :payment_text,
+                       :payment_info,
                        :taxes,
                        :tax_amount,
                        :basis_amount,
@@ -164,7 +164,7 @@ module Secretariat
               xml['ram'].InvoiceCurrencyCode currency_code
               xml['ram'].SpecifiedTradeSettlementPaymentMeans do
                 xml['ram'].TypeCode payment_code
-                xml['ram'].Information payment_text
+                xml['ram'].Information payment_info
               end
 
               taxes.each { |tax| tax.to_xml(xml, version: version) }
