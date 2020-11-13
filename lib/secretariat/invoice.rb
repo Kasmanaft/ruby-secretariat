@@ -33,6 +33,8 @@ module Secretariat
                        :due_amount,
                        :paid_amount,
                        :type,
+                       :payment_text,
+                       :to_date,
                        keyword_init: true) do
     include Versioner
 
@@ -167,8 +169,19 @@ module Secretariat
 
               taxes.each { |tax| tax.to_xml(xml, version: version) }
 
-              xml['ram'].SpecifiedTradePaymentTerms do
-                xml['ram'].Description 'Paid'
+              # xml['ram'].SpecifiedTradePaymentTerms do
+              #   xml['ram'].Description 'Paid'
+              # end
+
+              if payment_text.present?
+                xml['ram'].SpecifiedTradePaymentTerms do
+                  xml['ram'].Description payment_text
+                  xml['ram'].DueDateDateTime do
+                    xml['udt'].DateTimeString(format: '102') do
+                      xml.text(to_date.strftime('%Y%m%d'))
+                    end
+                  end
+                end
               end
 
               monetary_summation = by_version(version, 'SpecifiedTradeSettlementMonetarySummation', 'SpecifiedTradeSettlementHeaderMonetarySummation')

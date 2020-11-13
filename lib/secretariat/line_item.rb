@@ -29,7 +29,7 @@ module Secretariat
                         :tax_amount,
                         :discount_amount,
                         :discount_reason,
-                        :charge_amount,
+                        :total_amount,
                         :origin_country_code,
                         :currency_code,
                         keyword_init: true) do
@@ -43,7 +43,7 @@ module Secretariat
       @errors = []
       net_price = BigDecimal(net_amount)
       gross_price = BigDecimal(gross_amount)
-      charge_price = BigDecimal(charge_amount)
+      charge_price = BigDecimal(total_amount)
       tax = BigDecimal(tax_amount)
       unit_price = net_price * BigDecimal(quantity)
 
@@ -152,7 +152,7 @@ module Secretariat
           end
           monetary_summation = by_version(version, 'SpecifiedTradeSettlementMonetarySummation', 'SpecifiedTradeSettlementLineMonetarySummation')
           xml['ram'].send(monetary_summation) do
-            Helpers.currency_element(xml, 'ram', 'LineTotalAmount', charge_amount, currency_code, add_currency: version == 1)
+            Helpers.currency_element(xml, 'ram', 'LineTotalAmount', total_amount, currency_code, add_currency: version == 1)
           end
         end
 
