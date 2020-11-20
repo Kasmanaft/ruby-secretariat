@@ -99,9 +99,9 @@ module Secretariat
       raise ValidationError.new('Invoice is invalid', errors) unless valid?
 
       builder = Nokogiri::XML::Builder.new do |xml|
-        root = by_version(version, 'CrossIndustryDocument', 'CrossIndustryInvoice')
+        root = by_version(version, 'rsm:CrossIndustryDocument', 'rsm:CrossIndustryInvoice')
 
-        xml['rsm'].send(root, namespaces(version: version)) do
+        xml.send(root, namespaces(version: version)) do
           context = by_version(version, 'SpecifiedExchangedDocumentContext', 'ExchangedDocumentContext')
 
           xml['rsm'].send(context) do
