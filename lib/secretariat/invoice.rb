@@ -75,13 +75,11 @@ module Secretariat
     def namespaces(version: 1)
       by_version(version,
                  {
-                   'xmlns' => '',
                    'xmlns:ram' => 'urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12',
                    'xmlns:udt' => 'urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15',
                    'xmlns:rsm' => 'urn:ferd:CrossIndustryDocument:invoice:1p0',
                    'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
                  },
-                 'xmlns' => '',
                  'xmlns:qdt' => 'urn:un:unece:uncefact:data:standard:QualifiedDataType:100',
                  'xmlns:ram' => 'urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100',
                  'xmlns:udt' => 'urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100',
@@ -100,7 +98,7 @@ module Secretariat
 
       raise ValidationError.new('Invoice is invalid', errors) unless valid?
 
-      Nokogiri::XML::Builder.new do |xml|
+      Nokogiri::XML::Builder.new(encoding: "utf-8") do |xml|
         root = by_version(version, 'CrossIndustryDocument', 'CrossIndustryInvoice')
 
         xml['rsm'].send(root, namespaces(version: version)) do
@@ -207,7 +205,7 @@ module Secretariat
             end
           end
         end
-      end.doc.to_xml
+      end.to_xml
     end
   end
 end
